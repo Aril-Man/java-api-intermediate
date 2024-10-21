@@ -5,13 +5,16 @@ import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 import training.java.learn.Security.BCrypt;
 import training.java.learn.dto.RegisterUserRequest;
 import training.java.learn.entity.User;
 import training.java.learn.exception.ApiException;
 import training.java.learn.repository.UserRepository;
 import training.java.learn.service.UserService;
+import training.java.learn.service.ValidationService;
 
 import java.util.Set;
 
@@ -22,18 +25,14 @@ public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
 
     @Autowired
-    Validator validator;
+    private ValidationService validationService;
 
     @Transactional
     public void register(RegisterUserRequest request) {
-        Set<ConstraintViolation<RegisterUserRequest>> constraintViolations = validator.validate(request);
-
-        if (constraintViolations.size() != 0) {
-            throw new ConstraintViolationException(constraintViolations);
-        }
+        validationService.validation(request);
 
         if (userRepository.existsById(request.getUsername())) {
-            throw new ApiException("User already registered");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "username alredy register");
         }
 
         User user = new User();
