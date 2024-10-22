@@ -10,8 +10,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import training.java.learn.Security.BCrypt;
 import training.java.learn.dto.RegisterUserRequest;
+import training.java.learn.dto.UserResponse;
 import training.java.learn.entity.User;
-import training.java.learn.exception.ApiException;
 import training.java.learn.repository.UserRepository;
 import training.java.learn.service.UserService;
 import training.java.learn.service.ValidationService;
@@ -41,5 +41,13 @@ public class UserServiceImpl implements UserService {
         user.setName(request.getName());
 
         userRepository.save(user);
+    }
+
+    @Override
+    public UserResponse get(User user) {
+        return UserResponse.builder()
+                .username(user.getUsername() )
+                .name(user.getName())
+                .build();
     }
 }
