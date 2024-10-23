@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import training.java.learn.Security.BCrypt;
 import training.java.learn.dto.RegisterUserRequest;
+import training.java.learn.dto.UpdateUserRequest;
 import training.java.learn.dto.UserResponse;
 import training.java.learn.entity.User;
 import training.java.learn.repository.UserRepository;
@@ -48,6 +49,24 @@ public class UserServiceImpl implements UserService {
         return UserResponse.builder()
                 .username(user.getUsername() )
                 .name(user.getName())
+                .build();
+    }
+
+    @Transactional
+    public UserResponse update(User user, UpdateUserRequest request) {
+        validationService.validation(request);
+        if (!request.getPassword().isEmpty() && !BCrypt.checkpw(request.getOld_password(), user.getPassword())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "password not match");
+        }
+
+        user.setName(request.getName().isEmpty() ? user.getName() : request.getName());
+        user.setPassword(request.getPassword().isEmpty() ? user.getPassword() : BCrypt.hashpw(request.getPassword(), BCrypt.gensalt()));
+
+        userRepository.save(user);
+
+        return UserResponse.builder()
+                .name(user.getName())
+                .username(user.getUsername())
                 .build();
     }
 }

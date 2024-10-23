@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import training.java.learn.Security.BCrypt;
 import training.java.learn.dto.LoginUserRequest;
+import training.java.learn.dto.LogoutResponse;
 import training.java.learn.dto.TokenResponse;
 import training.java.learn.entity.User;
 import training.java.learn.repository.UserRepository;
@@ -43,6 +44,15 @@ public class AuthServiceImpl implements AuthService {
                 .token(user.getToken())
                 .expiredAt(user.getTokenExpiredAt())
                 .build();
+    }
+
+    @Override
+    public LogoutResponse logout(User user) {
+        user.setToken(null);
+        user.setTokenExpiredAt(null);
+        userRepository.save(user);
+
+        return LogoutResponse.builder().message("Successfully logout").build();
     }
 
     public Long next30Days() {

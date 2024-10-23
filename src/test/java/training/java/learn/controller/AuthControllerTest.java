@@ -11,6 +11,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import training.java.learn.Security.BCrypt;
 import training.java.learn.dto.LoginUserRequest;
+import training.java.learn.dto.LogoutResponse;
 import training.java.learn.dto.TokenResponse;
 import training.java.learn.dto.WebResponse;
 import training.java.learn.entity.User;
@@ -113,6 +114,61 @@ public class AuthControllerTest {
             assertNotNull(userDb);
             assertEquals(userDb.getToken(), response.getData().getToken());
             assertEquals(userDb.getTokenExpiredAt(), response.getData().getExpiredAt());
+        });
+    }
+
+    @Test
+    void testLogoutSuccess() throws Exception {
+
+        User user = new User();
+        user.setUsername("putri");
+        user.setName("Putri");
+        user.setPassword(BCrypt.hashpw("rahasia", BCrypt.gensalt()));
+        user.setToken("tokens");
+        user.setTokenExpiredAt(System.currentTimeMillis() + 10000000L);
+        userRepository.save(user);
+
+        mockMvc.perform(
+                post("/auth/logout")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(user))
+                        .header("X-API-TOKEN", "tokens")
+        ).andExpectAll(
+           status().isOk()
+        ).andDo(result ->  {
+            WebResponse<LogoutResponse> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+            });
+
+            assertNull(response.getErrors());
+            assertNotNull(response.getData());
+        });
+    }
+
+    @Test
+    void testLogoutUnauthorized() throws Exception {
+
+        User user = new User();
+        user.setUsername("putri");
+        user.setName("Putri");
+        user.setPassword(BCrypt.hashpw("rahasia", BCrypt.gensalt()));
+        user.setToken("tokens");
+        user.setTokenExpiredAt(System.currentTimeMillis() + 10000000L);
+        userRepository.save(user);
+
+        mockMvc.perform(
+                post("/auth/logout")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(user))
+                        .header("X-API-TOKEN", "notfound")
+        ).andExpectAll(
+                status().isUnauthorized()
+        ).andDo(result ->  {
+            WebResponse<LogoutResponse> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+            });
+
+            assertNotNull(response.getErrors());
         });
     }
 }

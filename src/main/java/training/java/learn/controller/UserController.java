@@ -2,11 +2,9 @@ package training.java.learn.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import training.java.learn.dto.RegisterUserRequest;
+import training.java.learn.dto.UpdateUserRequest;
 import training.java.learn.dto.UserResponse;
 import training.java.learn.dto.WebResponse;
 import training.java.learn.entity.User;
@@ -35,5 +33,15 @@ public class UserController {
     public WebResponse<UserResponse> get(User user) {
         UserResponse userResponse = userService.get(user);
         return WebResponse.<UserResponse>builder().data(userResponse).build();
+    }
+
+    @PatchMapping(
+            path = "/api/user/update",
+            produces = MediaType.APPLICATION_JSON_VALUE,
+            consumes = MediaType.APPLICATION_JSON_VALUE
+    )
+    public WebResponse<UserResponse> update(User user, @RequestBody UpdateUserRequest request) {
+        UserResponse update = userService.update(user, request);
+        return WebResponse.<UserResponse>builder().data(update).build();
     }
 }
