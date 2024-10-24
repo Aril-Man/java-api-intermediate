@@ -18,6 +18,8 @@ import training.java.learn.dto.WebResponse;
 import training.java.learn.entity.User;
 import training.java.learn.repository.UserRepository;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -264,6 +266,33 @@ class UserControllerTest {
             WebResponse<UserResponse> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {});
 
             assertNotNull(response.getErrors());
+        });
+    }
+
+    @Test
+    void listALlUser() throws Exception {
+        User user = new User();
+        user.setName("Aril");
+        user.setUsername("aril");
+        user.setPassword(BCrypt.hashpw("rahasia", BCrypt.gensalt()));
+        user.setToken("tokens");
+        user.setTokenExpiredAt(System.currentTimeMillis() + 1000000L);
+
+        userRepository.save(user);
+
+        mockMvc.perform(
+                get("/api/users/gets")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("X-API-TOKEN", "tokens")
+        ).andExpectAll(
+                status().isOk()
+        ).andDo(result -> {
+            WebResponse<List<User>> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+            });
+
+            assertNotNull(response.getData());
+            assertNull(response.getErrors());
         });
     }
 }

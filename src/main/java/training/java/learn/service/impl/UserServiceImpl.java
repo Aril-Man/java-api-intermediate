@@ -1,9 +1,6 @@
 package training.java.learn.service.impl;
 
 import jakarta.transaction.Transactional;
-import jakarta.validation.ConstraintViolation;
-import jakarta.validation.ConstraintViolationException;
-import jakarta.validation.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -17,7 +14,7 @@ import training.java.learn.repository.UserRepository;
 import training.java.learn.service.UserService;
 import training.java.learn.service.ValidationService;
 
-import java.util.Set;
+import java.util.List;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -68,5 +65,11 @@ public class UserServiceImpl implements UserService {
                 .name(user.getName())
                 .username(user.getUsername())
                 .build();
+    }
+
+    @Override
+    public List<User> getUsers(User user) {
+        List<User> users = userRepository.findAll();
+        return users;
     }
 }

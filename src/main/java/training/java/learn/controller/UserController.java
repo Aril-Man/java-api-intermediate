@@ -10,6 +10,8 @@ import training.java.learn.dto.WebResponse;
 import training.java.learn.entity.User;
 import training.java.learn.service.UserService;
 
+import java.util.List;
+
 @RestController
 public class UserController {
 
@@ -43,5 +45,14 @@ public class UserController {
     public WebResponse<UserResponse> update(User user, @RequestBody UpdateUserRequest request) {
         UserResponse update = userService.update(user, request);
         return WebResponse.<UserResponse>builder().data(update).build();
+    }
+
+    @GetMapping(
+            path = "/api/users/gets",
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public WebResponse<List<User>> getAllUser(User user) {
+        List<User> users = userService.getUsers(user);
+        return WebResponse.<List<User>>builder().data(users).build();
     }
 }
