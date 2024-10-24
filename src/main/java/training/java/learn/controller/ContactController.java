@@ -5,6 +5,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import training.java.learn.dto.ContactResponse;
 import training.java.learn.dto.CreateContactRequest;
+import training.java.learn.dto.UpdateContactRequest;
 import training.java.learn.dto.WebResponse;
 import training.java.learn.entity.User;
 import training.java.learn.service.ContactService;
@@ -35,5 +36,15 @@ public class ContactController {
         return WebResponse.<ContactResponse>builder()
                 .data(result)
                 .build();
+    }
+
+    @PatchMapping(
+            path = "/api/contact/update",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public WebResponse<ContactResponse> update(User user, @RequestBody UpdateContactRequest request) {
+        ContactResponse result = contactService.update(user, request);
+        return WebResponse.<ContactResponse>builder().data(result).build();
     }
 }

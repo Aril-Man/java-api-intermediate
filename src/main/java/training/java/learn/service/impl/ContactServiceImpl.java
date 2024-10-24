@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import training.java.learn.dto.ContactResponse;
 import training.java.learn.dto.CreateContactRequest;
+import training.java.learn.dto.UpdateContactRequest;
 import training.java.learn.entity.Contact;
 import training.java.learn.entity.User;
 import training.java.learn.repository.ContactRepository;
@@ -58,6 +59,27 @@ public class ContactServiceImpl implements ContactService {
                 .lastName(contact.getLastName())
                 .phone(contact.getPhone())
                 .email(contact.getEmail())
+                .build();
+    }
+
+    @Transactional
+    public ContactResponse update(User user, UpdateContactRequest request) {
+        Contact contact = contactRepository.findByUsername(user, user.getUsername())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "contact not found"));
+
+        contact.setFirstName(request.getFirstName().isEmpty() ? contact.getFirstName() : request.getFirstName());
+        contact.setLastName(request.getLastName().isEmpty() ? contact.getLastName() : request.getLastName());
+        contact.setEmail(request.getEmail().isEmpty() ? contact.getEmail() : request.getEmail());
+        contact.setPhone(request.getPhone().isEmpty() ? contact.getPhone() : request.getPhone());
+
+        contactRepository.save(contact);
+
+        return ContactResponse.builder()
+                .id(contact.getId())
+                .email(contact.getEmail())
+                .phone(contact.getPhone())
+                .firstName(contact.getFirstName())
+                .lastName(contact.getPhone())
                 .build();
     }
 }
