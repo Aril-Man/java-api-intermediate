@@ -143,12 +143,54 @@ class ContactControllerTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .header("X-API-TOKEN", "tokens")
             ).andExpectAll(
-
+                status().isOk()
             ).andDo(res -> {
                 WebResponse<ContactResponse> resGetContact = objectMapper.readValue(res.getResponse().getContentAsString(), new TypeReference<>() {});
 
                 assertNotNull(resGetContact.getData());
                 assertNull(resGetContact.getErrors());
+            });
+        });
+    }
+
+    @Test
+    void getContactFailed() throws Exception {
+        User user = new User();
+        user.setName("Putri");
+        user.setUsername("putri");
+        user.setPassword(BCrypt.hashpw("rahasia", BCrypt.gensalt()));
+        user.setToken("tokens");
+        user.setTokenExpiredAt(System.currentTimeMillis() + 1000000L);
+        userRepository.save(user);
+
+        CreateContactRequest request = new CreateContactRequest();
+        request.setFirstName("Aril");
+        request.setLastName("Fauzi");
+        request.setEmail("aril@gmail.com");
+        request.setPhone("089654582742");
+
+        mockMvc.perform(
+                post("/api/create/contact")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("X-API-TOKEN", "tokens")
+                        .content(objectMapper.writeValueAsString(request))
+        ).andExpectAll(
+                status().isOk()
+        ).andDo(result -> {
+            WebResponse<ContactResponse> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+            });
+
+            mockMvc.perform(
+                    get("/api/contact/" + response.getData().getId())
+                            .accept(MediaType.APPLICATION_JSON)
+                            .contentType(MediaType.APPLICATION_JSON)
+            ).andExpectAll(
+                    status().isUnauthorized()
+            ).andDo(res -> {
+                WebResponse<ContactResponse> resGetContact = objectMapper.readValue(res.getResponse().getContentAsString(), new TypeReference<>() {});
+
+                assertNotNull(resGetContact.getErrors());
             });
         });
     }
