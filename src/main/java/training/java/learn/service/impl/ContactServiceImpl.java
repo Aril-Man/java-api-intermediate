@@ -8,6 +8,7 @@ import org.springframework.web.server.ResponseStatusException;
 import training.java.learn.dto.ContactResponse;
 import training.java.learn.dto.CreateContactRequest;
 import training.java.learn.dto.UpdateContactRequest;
+import training.java.learn.dto.WebResponse;
 import training.java.learn.entity.Contact;
 import training.java.learn.entity.User;
 import training.java.learn.repository.ContactRepository;
@@ -81,5 +82,12 @@ public class ContactServiceImpl implements ContactService {
                 .firstName(contact.getFirstName())
                 .lastName(contact.getPhone())
                 .build();
+    }
+
+    @Override
+    public WebResponse<String> removeContact(User user, String id) {
+        contactRepository.deleteById(id);
+        return WebResponse.<String>builder().data("Successfully remove contact").build();
+
     }
 }

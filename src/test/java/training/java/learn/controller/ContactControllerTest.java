@@ -250,4 +250,9 @@ class ContactControllerTest {
 
         });
     }
+
+    @Test
+    void removeContactSuccessfully() throws Exception {
+        
+    }
 }
