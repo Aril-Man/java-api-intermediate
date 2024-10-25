@@ -12,6 +12,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UpdateContactRequest {
+
+    private String id;
+
     @Size(max = 100)
     private String firstName;
 

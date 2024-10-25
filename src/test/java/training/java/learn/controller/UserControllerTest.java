@@ -16,6 +16,7 @@ import training.java.learn.dto.UpdateUserRequest;
 import training.java.learn.dto.UserResponse;
 import training.java.learn.dto.WebResponse;
 import training.java.learn.entity.User;
+import training.java.learn.repository.ContactRepository;
 import training.java.learn.repository.UserRepository;
 
 import java.util.List;
@@ -31,6 +32,9 @@ class UserControllerTest {
     private MockMvc mockMvc;
 
     @Autowired
+    private ContactRepository contactRepository;
+
+    @Autowired
     private UserRepository userRepository;
 
     @Autowired
@@ -38,6 +42,7 @@ class UserControllerTest {
 
     @BeforeEach
     void setUp() {
+        contactRepository.deleteAll();
         userRepository.deleteAll();
     }
 

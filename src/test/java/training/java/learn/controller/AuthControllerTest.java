@@ -15,6 +15,7 @@ import training.java.learn.dto.LogoutResponse;
 import training.java.learn.dto.TokenResponse;
 import training.java.learn.dto.WebResponse;
 import training.java.learn.entity.User;
+import training.java.learn.repository.ContactRepository;
 import training.java.learn.repository.UserRepository;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -27,12 +28,15 @@ public class AuthControllerTest {
     @Autowired
     private MockMvc mockMvc;
     @Autowired
+    private ContactRepository contactRepository;
+    @Autowired
     private UserRepository userRepository;
     @Autowired
     private ObjectMapper objectMapper;
 
     @BeforeEach
     void setUp() {
+        contactRepository.deleteAll();
         userRepository.deleteAll();
     }
 

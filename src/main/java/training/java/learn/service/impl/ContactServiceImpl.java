@@ -64,8 +64,8 @@ public class ContactServiceImpl implements ContactService {
 
     @Transactional
     public ContactResponse update(User user, UpdateContactRequest request) {
-        Contact contact = contactRepository.findByUsername(user, user.getUsername())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "contact not found"));
+        Contact contact = contactRepository.findById(request.getId())
+                        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "contact not found"));
 
         contact.setFirstName(request.getFirstName().isEmpty() ? contact.getFirstName() : request.getFirstName());
         contact.setLastName(request.getLastName().isEmpty() ? contact.getLastName() : request.getLastName());
