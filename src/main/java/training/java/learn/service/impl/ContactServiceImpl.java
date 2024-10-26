@@ -1,21 +1,28 @@
 package training.java.learn.service.impl;
 
+import jakarta.persistence.criteria.Predicate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
-import training.java.learn.dto.ContactResponse;
-import training.java.learn.dto.CreateContactRequest;
-import training.java.learn.dto.UpdateContactRequest;
-import training.java.learn.dto.WebResponse;
+import training.java.learn.dto.*;
 import training.java.learn.entity.Contact;
 import training.java.learn.entity.User;
 import training.java.learn.repository.ContactRepository;
 import training.java.learn.service.ContactService;
 import training.java.learn.service.ValidationService;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class ContactServiceImpl implements ContactService {
@@ -89,5 +96,46 @@ public class ContactServiceImpl implements ContactService {
         contactRepository.deleteById(id);
         return WebResponse.<String>builder().data("Successfully remove contact").build();
 
+    }
+
+    @Transactional(readOnly = true)
+    public Page<ContactResponse> seach(User user, SearchContactRequest request) {
+        Specification<Contact> specification = (root, query, builder) -> {
+            List<Predicate> predicates = new ArrayList<>();
+            predicates.add(builder.equal(root.get("user"), user));
+            if (Objects.nonNull(request.getName())) {
+                predicates.add(builder.or(
+                        builder.like(root.get("fistName"), "%"+ request.getName() +"%"),
+                        builder.like(root.get("lastName"), "%"+ request.getName() +"%")
+                ));
+            }
+            if (Objects.nonNull(request.getEmail())) {
+                predicates.add(builder.or(
+                        builder.like(root.get("email"), "%" + request.getEmail() + "%")
+                ));
+            }
+            if (Objects.nonNull(request.getPhone())) {
+                predicates.add(builder.or(
+                        builder.like(root.get("phone"), "%" + request.getPhone() + "%")
+                ));
+            }
+
+            return query.where(predicates.toArray(new Predicate[]{})).getGroupRestriction();
+        };
+
+        Pageable pageable = PageRequest.of(request.getPage(), request.getSize());
+        Page<Contact> contacts = contactRepository.findAll(specification, pageable);
+        List<ContactResponse> contactResponses = contacts.getContent().stream()
+                .map(contact -> {
+                    return ContactResponse.builder()
+                            .id(contact.getId())
+                            .firstName(contact.getFirstName())
+                            .lastName(contact.getLastName())
+                            .email(contact.getEmail())
+                            .phone(contact.getPhone())
+                            .build();
+                }).collect(Collectors.toList());
+
+        return new PageImpl<>(contactResponses, pageable, contacts.getTotalElements());
     }
 }
