@@ -59,7 +59,7 @@ public class ContactController {
             path = "/api/contacts",
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public WebResponse<List<ContactResponse>> search(User user, @RequestParam(name = "name") String name,
+    public WebResponse<List<ContactResponse>> search(User user, @RequestParam(name = "name", required = false) String name,
                                                      @RequestParam(name = "email", required = false) String email,
                                                      @RequestParam(name = "phone", required = false) String phone,
                                                      @RequestParam(name = "size", required = false, defaultValue = "10") Integer size,

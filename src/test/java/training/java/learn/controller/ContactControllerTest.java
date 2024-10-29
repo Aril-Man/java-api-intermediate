@@ -10,13 +10,15 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import training.java.learn.Security.BCrypt;
-import training.java.learn.dto.ContactResponse;
-import training.java.learn.dto.CreateContactRequest;
-import training.java.learn.dto.UpdateContactRequest;
-import training.java.learn.dto.WebResponse;
+import training.java.learn.dto.*;
+import training.java.learn.entity.Contact;
 import training.java.learn.entity.User;
 import training.java.learn.repository.ContactRepository;
 import training.java.learn.repository.UserRepository;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -41,7 +43,7 @@ class ContactControllerTest {
     @BeforeEach
     void setUp() {
         contactRepository.deleteAll();
-        userRepository.deleteAll();
+//        userRepository.deleteAll();
     }
 
     @Test
@@ -251,5 +253,79 @@ class ContactControllerTest {
         });
     }
 
+    @Test
+    void searchSuccess() throws Exception {
+        mockMvc.perform(
+                get("/api/contacts")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("X-API-TOKEN", "tokens")
+        ).andExpectAll(
+                status().isOk()
+        ).andDo(result -> {
+            WebResponse<List<ContactResponse>> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+            });
 
+            assertNull(response.getErrors());
+            assertEquals(1, response.getData().size());
+            assertEquals(1, response.getPaging().getTotalPage());
+            assertEquals(0, response.getPaging().getCurrentPage());
+        });
+    }
+
+
+    @Test
+    void searchNotFound() throws Exception {
+        mockMvc.perform(
+                get("/api/contacts")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("X-API-TOKEN", "tokens")
+        ).andExpectAll(
+                status().isOk()
+        ).andDo(result -> {
+            WebResponse<List<ContactResponse>> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+            });
+
+            assertNull(response.getErrors());
+            assertEquals(0, response.getData().size());
+            assertEquals(0, response.getPaging().getTotalPage());
+            assertEquals(0, response.getPaging().getCurrentPage());
+        });
+    }
+
+    @Test
+    void searchByName() throws Exception {
+
+        User user = userRepository.findById("putri").orElseThrow();
+
+        for (int i = 0; i < 100; i++) {
+            Contact contact = new Contact();
+            contact.setPhone("08992784233");
+            contact.setId(UUID.randomUUID().toString());
+            contact.setFirstName("Aril " + i);
+            contact.setLastName("Fauzi " + i);
+            contact.setUser(user);
+            contact.setEmail("Aril" + i +"@gmail.com");
+            contactRepository.save(contact);
+        }
+
+        SearchContactRequest request = new SearchContactRequest();
+        request.setName("Aril");
+
+        mockMvc.perform(
+                get("/api/contacts")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("X-API-TOKEN", "17f78a4d-79a7-40c0-8e68-315a55458ef4")
+                        .queryParam("name", "Aril")
+        ).andExpectAll(
+                status().isOk()
+        ).andDo(result -> {
+            WebResponse<List<ContactResponse>> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+            });
+
+            assertNull(response.getErrors());
+        });
+    }
 }

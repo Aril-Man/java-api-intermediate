@@ -126,16 +126,19 @@ public class ContactServiceImpl implements ContactService {
         Pageable pageable = PageRequest.of(request.getPage(), request.getSize());
         Page<Contact> contacts = contactRepository.findAll(specification, pageable);
         List<ContactResponse> contactResponses = contacts.getContent().stream()
-                .map(contact -> {
-                    return ContactResponse.builder()
-                            .id(contact.getId())
-                            .firstName(contact.getFirstName())
-                            .lastName(contact.getLastName())
-                            .email(contact.getEmail())
-                            .phone(contact.getPhone())
-                            .build();
-                }).collect(Collectors.toList());
+                .map(this::toContactResponse)
+                .toList();
 
         return new PageImpl<>(contactResponses, pageable, contacts.getTotalElements());
+    }
+
+    private ContactResponse toContactResponse(Contact contact) {
+        return ContactResponse.builder()
+                .id(contact.getId())
+                .firstName(contact.getFirstName())
+                .lastName(contact.getLastName())
+                .email(contact.getEmail())
+                .phone(contact.getPhone())
+                .build();
     }
 }

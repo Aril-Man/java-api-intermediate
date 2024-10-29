@@ -1,5 +1,8 @@
 package training.java.learn.service.impl;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTCreationException;
 import org.antlr.v4.runtime.Token;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,6 +17,9 @@ import training.java.learn.repository.UserRepository;
 import training.java.learn.service.AuthService;
 import training.java.learn.service.ValidationService;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -36,13 +42,15 @@ public class AuthServiceImpl implements AuthService {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "username or password is wrong");
         }
 
-        user.setToken(UUID.randomUUID().toString());
-        user.setTokenExpiredAt(next30Days());
+        String token = generateToken(request);
+
+        user.setToken(token);
+        user.setTokenExpiredAt(System.currentTimeMillis() + (1000 * 16 * 24 * 7));
         userRepository.save(user);
 
         return TokenResponse.builder()
                 .token(user.getToken())
-                .expiredAt(user.getTokenExpiredAt())
+                .expiredAt(next30Days())
                 .build();
     }
 
@@ -55,7 +63,31 @@ public class AuthServiceImpl implements AuthService {
         return LogoutResponse.builder().message("Successfully logout").build();
     }
 
-    public Long next30Days() {
-        return System.currentTimeMillis() + (1000 * 16 * 24 * 7);
+    public String next30Days() {
+        Long expired = System.currentTimeMillis() + (1000 * 16 * 24 * 7);
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-YY HH:mm:ss");
+        Date result = new Date(expired);
+
+        return sdf.format(result);
+    }
+
+    public String generateToken(LoginUserRequest request) {
+        try {
+
+            Long expired = System.currentTimeMillis() + (1000 * 16 * 24 * 7);
+            SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-YY HH:mm:ss");
+            Date date = new Date(expired);
+
+            Algorithm algorithm = Algorithm.HMAC256("Key");
+            String token = JWT.create()
+                    .withClaim("username", request.getUsername())
+                    .withClaim("password", request.getPassword())
+                    .withExpiresAt(date)
+                    .sign(algorithm);
+
+            return token;
+        } catch (JWTCreationException exception) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, exception.toString());
+        }
     }
 }
