@@ -43,7 +43,7 @@ class ContactControllerTest {
     @BeforeEach
     void setUp() {
         contactRepository.deleteAll();
-//        userRepository.deleteAll();
+        userRepository.deleteAll();
     }
 
     @Test
@@ -297,7 +297,14 @@ class ContactControllerTest {
     @Test
     void searchByName() throws Exception {
 
-        User user = userRepository.findById("putri").orElseThrow();
+        User user = new User();
+        user.setName("Putri");
+        user.setUsername("putri");
+        user.setPassword(BCrypt.hashpw("rahasia", BCrypt.gensalt()));
+        user.setToken("tokens");
+        user.setTokenExpiredAt(System.currentTimeMillis() + 100000L);
+
+        userRepository.save(user);
 
         for (int i = 0; i < 100; i++) {
             Contact contact = new Contact();
@@ -317,7 +324,7 @@ class ContactControllerTest {
                 get("/api/contacts")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("X-API-TOKEN", "17f78a4d-79a7-40c0-8e68-315a55458ef4")
+                        .header("X-API-TOKEN", "tokens")
                         .queryParam("name", "Aril")
         ).andExpectAll(
                 status().isOk()

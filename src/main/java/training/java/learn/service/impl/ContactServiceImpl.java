@@ -105,7 +105,7 @@ public class ContactServiceImpl implements ContactService {
             predicates.add(builder.equal(root.get("user"), user));
             if (Objects.nonNull(request.getName())) {
                 predicates.add(builder.or(
-                        builder.like(root.get("fistName"), "%"+ request.getName() +"%"),
+                        builder.like(root.get("firstName"), "%"+ request.getName() +"%"),
                         builder.like(root.get("lastName"), "%"+ request.getName() +"%")
                 ));
             }
