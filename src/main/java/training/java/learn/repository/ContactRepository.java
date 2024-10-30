@@ -11,4 +11,5 @@ import java.util.Optional;
 @Repository
 public interface ContactRepository extends JpaRepository<Contact, String>, JpaSpecificationExecutor<Contact> {
     Optional<Contact> findFirstByUserAndId(User user, String id);
+    Contact findFirstByUser(User user);
 }
