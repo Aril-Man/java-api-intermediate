@@ -8,4 +8,5 @@ import training.java.learn.entity.User;
 @Service
 public interface AddressService {
     AddressResponse create(User user, CreateAddressRequest request);
+    AddressResponse getCurrentAddress(User user);
 }

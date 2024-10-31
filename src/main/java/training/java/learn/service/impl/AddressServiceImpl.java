@@ -2,7 +2,9 @@ package training.java.learn.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import training.java.learn.dto.AddressResponse;
+import training.java.learn.dto.ContactResponse;
 import training.java.learn.dto.CreateAddressRequest;
 import training.java.learn.entity.Address;
 import training.java.learn.entity.Contact;
@@ -27,6 +29,7 @@ public class AddressServiceImpl implements AddressService {
     @Autowired
     private ValidationService validationService;
 
+    @Transactional
     public AddressResponse create(User user, CreateAddressRequest request) {
         validationService.validation(request);
         Contact contact = contactRepository.findFirstByUser(user);
@@ -48,6 +51,24 @@ public class AddressServiceImpl implements AddressService {
                 .provice(address.getProvince())
                 .street(address.getStreet())
                 .postalCode(address.getPostalCode())
+                .build();
+    }
+
+    @Transactional(readOnly = true)
+    public AddressResponse getCurrentAddress(User user) {
+        Contact contact = contactRepository.findFirstByUser(user);
+        Address address = addressRepository.findByContactId(contact.getId());
+
+        return toContactResponse(address);
+    }
+
+    private AddressResponse toContactResponse(Address address) {
+        return AddressResponse.builder()
+                .country(address.getCountry())
+                .city(address.getCity())
+                .postalCode(address.getPostalCode())
+                .provice(address.getProvince())
+                .street(address.getStreet())
                 .build();
     }
 }

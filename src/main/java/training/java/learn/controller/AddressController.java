@@ -2,6 +2,7 @@ package training.java.learn.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -28,5 +29,15 @@ public class AddressController {
         return WebResponse.<AddressResponse>builder()
                 .data(result)
                 .build();
+    }
+
+    @GetMapping(
+            path = "/api/address/current",
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public WebResponse<AddressResponse> getCurrentAddress(User user) {
+        AddressResponse result = addressService.getCurrentAddress(user);
+
+        return WebResponse.<AddressResponse>builder().data(result).build();
     }
 }

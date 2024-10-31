@@ -6,4 +6,5 @@ import training.java.learn.entity.Address;
 
 @Repository
 public interface AddressRepository extends JpaRepository<Address, String> {
+    Address findByContactId(String id);
 }
