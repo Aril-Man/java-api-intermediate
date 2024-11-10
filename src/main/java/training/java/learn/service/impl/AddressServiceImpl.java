@@ -1,8 +1,10 @@
 package training.java.learn.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 import training.java.learn.dto.AddressResponse;
 import training.java.learn.dto.ContactResponse;
 import training.java.learn.dto.CreateAddressRequest;
@@ -59,10 +61,18 @@ public class AddressServiceImpl implements AddressService {
         Contact contact = contactRepository.findFirstByUser(user);
         Address address = addressRepository.findByContactId(contact.getId());
 
-        return toContactResponse(address);
+        return toAddressResponse(address);
     }
 
-    private AddressResponse toContactResponse(Address address) {
+    @Transactional(readOnly = true)
+    public AddressResponse getAddress(String contactId, String addressId) {
+        Address address = addressRepository.findByContactIdAndAddressId(contactId, addressId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Address is not found"));
+
+        return toAddressResponse(address);
+    }
+
+    private AddressResponse toAddressResponse(Address address) {
         return AddressResponse.builder()
                 .country(address.getCountry())
                 .city(address.getCity())

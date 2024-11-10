@@ -2,10 +2,7 @@ package training.java.learn.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import training.java.learn.dto.AddressResponse;
 import training.java.learn.dto.CreateAddressRequest;
 import training.java.learn.dto.WebResponse;
@@ -39,5 +36,19 @@ public class AddressController {
         AddressResponse result = addressService.getCurrentAddress(user);
 
         return WebResponse.<AddressResponse>builder().data(result).build();
+    }
+
+    @GetMapping(
+            path = "/api/contact/{contact_id}/address/{address_id}"
+    )
+    public WebResponse<AddressResponse> getAddress(User user,
+                                                   @PathVariable String contactId,
+                                                   @PathVariable String addressId) {
+
+        AddressResponse result = addressService.getAddress(contactId, addressId);
+
+        return WebResponse.<AddressResponse>builder()
+                .data(result)
+                .build();
     }
 }
