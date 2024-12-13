@@ -64,14 +64,6 @@ public class AddressServiceImpl implements AddressService {
         return toAddressResponse(address);
     }
 
-    @Transactional(readOnly = true)
-    public AddressResponse getAddress(String contactId, String addressId) {
-        Address address = addressRepository.findByContactIdAndAddressId(contactId, addressId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Address is not found"));
-
-        return toAddressResponse(address);
-    }
-
     private AddressResponse toAddressResponse(Address address) {
         return AddressResponse.builder()
                 .country(address.getCountry())

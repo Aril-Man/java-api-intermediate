@@ -37,18 +37,4 @@ public class AddressController {
 
         return WebResponse.<AddressResponse>builder().data(result).build();
     }
-
-    @GetMapping(
-            path = "/api/contact/{contact_id}/address/{address_id}"
-    )
-    public WebResponse<AddressResponse> getAddress(User user,
-                                                   @PathVariable String contactId,
-                                                   @PathVariable String addressId) {
-
-        AddressResponse result = addressService.getAddress(contactId, addressId);
-
-        return WebResponse.<AddressResponse>builder()
-                .data(result)
-                .build();
-    }
 }
