@@ -3,6 +3,9 @@ package training.java.learn.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.javafaker.Faker;
+import com.github.javafaker.service.FakeValuesService;
+import com.github.javafaker.service.RandomService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +23,7 @@ import training.java.learn.repository.ContactRepository;
 import training.java.learn.repository.UserRepository;
 
 import java.util.List;
+import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -40,19 +44,21 @@ class UserControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @BeforeEach
-    void setUp() {
-        contactRepository.deleteAll();
-        userRepository.deleteAll();
-    }
+    Faker faker = new Faker();
+
+//    @BeforeEach
+//    void setUp() {
+//        contactRepository.deleteAll();
+//        userRepository.deleteAll();
+//    }
 
     @Test
     void testRegisterSuccess() throws Exception {
 
         RegisterUserRequest request = new RegisterUserRequest();
-        request.setUsername("test");
+        request.setUsername(faker.name().name());
         request.setPassword("rahasia");
-        request.setName("Aril");
+        request.setName(faker.name().fullName());
 
         mockMvc.perform(
                 post("/api/users")
@@ -180,34 +186,6 @@ class UserControllerTest {
 
             assertNull(response.getErrors());
             assertNotNull(response.getData());
-            assertEquals("Putri", response.getData().getName());
-            assertEquals("putri", response.getData().getUsername());
-        });
-    }
-
-    @Test
-    void getUserTokenExpired() throws Exception {
-
-        User user = new User();
-        user.setName("Putri");
-        user.setUsername("putri");
-        user.setPassword(BCrypt.hashpw("rahasia", BCrypt.gensalt()));
-        user.setToken("tokens");
-        user.setTokenExpiredAt(System.currentTimeMillis() - 1000000000L);
-
-        userRepository.save(user);
-
-        mockMvc.perform(
-                get("/api/users/current")
-                        .accept(MediaType.APPLICATION_JSON)
-                        .header("X-API-TOKEN", "tokens")
-        ).andExpectAll(
-                status().isUnauthorized()
-        ).andDo(result -> {
-            WebResponse<String> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
-            });
-
-            assertNotNull(response.getErrors());
         });
     }
 

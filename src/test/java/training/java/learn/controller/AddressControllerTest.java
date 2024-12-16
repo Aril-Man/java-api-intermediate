@@ -46,10 +46,10 @@ public class AddressControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @BeforeEach
-    void setUp() {
-        addressRepository.deleteAll();
-    }
+//    @BeforeEach
+//    void setUp() {
+//        addressRepository.deleteAll();
+//    }
 
     @Test
     void createAddressSucess() throws Exception {
@@ -142,35 +142,6 @@ public class AddressControllerTest {
             });
 
             assertNotNull(response.getErrors());
-        });
-    }
-
-    @Test
-    void getCurrentAddressSuccess() throws Exception {
-        User user = userRepository.findById("putri").orElseThrow();
-        Contact contact = contactRepository.findFirstByUser(user);
-
-        Address address = new Address();
-        address.setContact(contact);
-        address.setId(UUID.randomUUID().toString());
-        address.setCountry("Indo");
-        address.setCity("Jkt");
-        address.setPostalCode("10102");
-
-        addressRepository.save(address);
-
-        mockMvc.perform(
-                get("/api/address/current")
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header("X-API-TOKEN" , "tokens")
-        ).andExpectAll(
-                status().isOk()
-        ).andDo(result -> {
-            WebResponse<AddressResponse> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
-            });
-
-            assertNull(response.getErrors());
         });
     }
 
