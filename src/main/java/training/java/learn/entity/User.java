@@ -28,4 +28,10 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     private List<Contact> contacts;
+
+    public User(String username, String password, String name) {
+        this.username = username;
+        this.password = password;
+        this.name = name;
+    }
 }

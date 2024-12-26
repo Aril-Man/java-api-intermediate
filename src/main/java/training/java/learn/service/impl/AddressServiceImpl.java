@@ -36,13 +36,7 @@ public class AddressServiceImpl implements AddressService {
         validationService.validation(request);
         Contact contact = contactRepository.findFirstByUser(user);
 
-        Address address = new Address();
-        address.setId(UUID.randomUUID().toString());
-        address.setCity(request.getCity());
-        address.setCountry(request.getContry());
-        address.setProvince(request.getProvince());
-        address.setStreet(request.getStreet());
-        address.setPostalCode(request.getPostalCode());
+        Address address = new Address(UUID.randomUUID().toString(), request.getStreet(), request.getCity(), request.getProvince(), request.getContry(), request.getPostalCode());
         address.setContact(contact);
 
         addressRepository.save(address);

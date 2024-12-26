@@ -33,11 +33,7 @@ public class UserServiceImpl implements UserService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "username alredy register");
         }
 
-        User user = new User();
-        user.setUsername(request.getUsername());
-        user.setPassword(BCrypt.hashpw(request.getPassword(), BCrypt.gensalt()));
-        user.setName(request.getName());
-
+        User user = new User(request.getUsername(), BCrypt.hashpw(request.getPassword(), BCrypt.gensalt()), request.getName());
         userRepository.save(user);
     }
 

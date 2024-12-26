@@ -20,4 +20,10 @@ public class Books {
     private String judul;
     private String penulis;
     private String penerbit;
+
+    public Books(String judul, String penulis, String penerbit) {
+        this.judul = judul;
+        this.penulis = penulis;
+        this.penerbit = penerbit;
+    }
 }

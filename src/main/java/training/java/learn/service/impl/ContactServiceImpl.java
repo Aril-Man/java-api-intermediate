@@ -37,12 +37,7 @@ public class ContactServiceImpl implements ContactService {
     public ContactResponse create(User user, CreateContactRequest request) {
         validationService.validation(request);
 
-        Contact contact = new Contact();
-        contact.setId(UUID.randomUUID().toString());
-        contact.setFirstName(request.getFirstName());
-        contact.setLastName(request.getLastName());
-        contact.setEmail(request.getEmail());
-        contact.setPhone(request.getPhone());
+        Contact contact = new Contact(UUID.randomUUID().toString(), request.getFirstName(), request.getLastName(), request.getPhone(), request.getEmail());
         contact.setUser(user);
 
         contactRepository.save(contact);

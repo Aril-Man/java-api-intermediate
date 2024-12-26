@@ -32,4 +32,12 @@ public class Contact {
 
     @OneToMany(mappedBy = "contact")
     private List<Address> addresses;
+
+    public Contact(String id, String firstName, String lastName, String phone, String email) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.phone = phone;
+        this.email = email;
+    }
 }

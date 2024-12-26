@@ -34,10 +34,7 @@ public class BookServiceImpl implements BookService {
            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Judul already exist");
         }
 
-        Books books = new Books();
-        books.setJudul(request.getJudul());
-        books.setPenulis(request.getPenulis());
-        books.setPenerbit(request.getPenerbit());
+        Books books = new Books(request.getJudul(), request.getPenulis(), request.getPenerbit());
         bookRepository.save(books);
     }
 

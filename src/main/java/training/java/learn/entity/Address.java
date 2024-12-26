@@ -26,4 +26,13 @@ public class Address {
     @ManyToOne
     @JoinColumn(name = "contact_id", referencedColumnName = "id")
     private Contact contact;
+
+    public Address(String id, String street, String city, String province, String country, String postalCode) {
+        this.id = id;
+        this.street = street;
+        this.city = city;
+        this.province = province;
+        this.country = country;
+        this.postalCode = postalCode;
+    }
 }
