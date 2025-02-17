@@ -38,12 +38,12 @@ class BookControllerTest {
 
     Faker faker = new Faker();
 
-    @AfterEach
-    void setUp() {
-        if (bookRepository.count() != 0) {
-            bookRepository.deleteAll();
-        }
-    }
+//    @AfterEach
+//    void setUp() {
+//        if (bookRepository.count() != 0) {
+//            bookRepository.deleteAll();
+//        }
+//    }
 
     @Test
     void createBookSuccess() throws Exception {

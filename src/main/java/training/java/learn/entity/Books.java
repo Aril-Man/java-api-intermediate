@@ -21,6 +21,10 @@ public class Books {
     private String penulis;
     private String penerbit;
 
+    @ManyToOne
+    @JoinColumn(name = "author_id", referencedColumnName = "id")
+    private Author author;
+
     public Books(String judul, String penulis, String penerbit) {
         this.judul = judul;
         this.penulis = penulis;

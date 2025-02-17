@@ -19,6 +19,8 @@ import org.springframework.web.server.ResponseStatusException;
 import training.java.learn.entity.User;
 import training.java.learn.repository.UserRepository;
 
+import java.util.Objects;
+
 @Component
 public class UserArgResolver implements HandlerMethodArgumentResolver {
 
@@ -39,6 +41,19 @@ public class UserArgResolver implements HandlerMethodArgumentResolver {
         }
 
         User user = userRepository.findFirstByToken(token).orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid token"));
+
+        try {
+            Algorithm algorithm = Algorithm.HMAC256("Key");
+            JWTVerifier verifier = JWT.require(algorithm).build();
+            DecodedJWT decodedJWT = verifier.verify(token);
+            String username = decodedJWT.getClaim("username").asString();
+
+            if (!Objects.equals(username, user.getUsername()))
+                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid token");
+
+        } catch (JWTCreationException exception) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid token");
+        }
 
         if (user.getTokenExpiredAt() < System.currentTimeMillis()) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "token is expired");

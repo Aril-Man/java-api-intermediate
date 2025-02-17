@@ -75,7 +75,6 @@ public class AuthServiceImpl implements AuthService {
         try {
 
             Long expired = System.currentTimeMillis() + (1000 * 16 * 24 * 7);
-            SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-YY HH:mm:ss");
             Date date = new Date(expired);
 
             Algorithm algorithm = Algorithm.HMAC256("Key");
