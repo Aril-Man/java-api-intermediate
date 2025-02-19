@@ -8,6 +8,7 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -23,6 +24,9 @@ import java.util.Objects;
 
 @Component
 public class UserArgResolver implements HandlerMethodArgumentResolver {
+
+    @Value(value = "${app.jwtKey}")
+    private String jwtKey;
 
     @Autowired
     private UserRepository userRepository;
@@ -43,7 +47,7 @@ public class UserArgResolver implements HandlerMethodArgumentResolver {
         User user = userRepository.findFirstByToken(token).orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid token"));
 
         try {
-            Algorithm algorithm = Algorithm.HMAC256("Key");
+            Algorithm algorithm = Algorithm.HMAC256(jwtKey);
             JWTVerifier verifier = JWT.require(algorithm).build();
             DecodedJWT decodedJWT = verifier.verify(token);
             String username = decodedJWT.getClaim("username").asString();

@@ -165,19 +165,12 @@ class UserControllerTest {
     @Test
     void getUserSuccess() throws Exception {
 
-        User user = new User();
-        user.setName("Putri");
-        user.setUsername("putri");
-        user.setPassword(BCrypt.hashpw("rahasia", BCrypt.gensalt()));
-        user.setToken("tokens");
-        user.setTokenExpiredAt(System.currentTimeMillis() + 1000000000L);
-
-        userRepository.save(user);
+        User user = userRepository.findFirstByUsername("putri");
 
         mockMvc.perform(
                 get("/api/users/current")
                         .accept(MediaType.APPLICATION_JSON)
-                        .header("X-API-TOKEN", "tokens")
+                        .header("X-API-TOKEN", user.getToken())
         ).andExpectAll(
                 status().isOk()
         ).andDo(result -> {

@@ -5,6 +5,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import org.antlr.v4.runtime.Token;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -24,6 +25,9 @@ import java.util.UUID;
 
 @Service
 public class AuthServiceImpl implements AuthService {
+
+    @Value(value = "${app.jwtKey}")
+    private String jwtKey;
 
     @Autowired
     private UserRepository userRepository;
@@ -73,11 +77,10 @@ public class AuthServiceImpl implements AuthService {
 
     public String generateToken(LoginUserRequest request) {
         try {
-
             Long expired = System.currentTimeMillis() + (1000 * 16 * 24 * 7);
             Date date = new Date(expired);
 
-            Algorithm algorithm = Algorithm.HMAC256("Key");
+            Algorithm algorithm = Algorithm.HMAC256(jwtKey);
             String token = JWT.create()
                     .withClaim("username", request.getUsername())
                     .withClaim("password", request.getPassword())

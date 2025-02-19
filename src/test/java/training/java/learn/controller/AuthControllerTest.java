@@ -91,13 +91,6 @@ public class AuthControllerTest {
 
     @Test
     void testLoginSuccess() throws Exception {
-
-        User user = new User();
-        user.setName("putri");
-        user.setUsername("putri");
-        user.setPassword(BCrypt.hashpw("rahasia", BCrypt.gensalt()));
-        userRepository.save(user);
-
         LoginUserRequest request = new LoginUserRequest();
         request.setUsername("putri");
         request.setPassword("rahasia");
