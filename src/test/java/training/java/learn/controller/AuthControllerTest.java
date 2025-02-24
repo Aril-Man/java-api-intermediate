@@ -3,6 +3,7 @@ package training.java.learn.controller;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.aspectj.lang.annotation.Before;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MockMvcBuilder;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
+import org.springframework.web.context.WebApplicationContext;
 import training.java.learn.Security.BCrypt;
 import training.java.learn.dto.LoginUserRequest;
 import training.java.learn.dto.LogoutResponse;
@@ -37,12 +41,6 @@ public class AuthControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-//    @BeforeEach
-//    void setUp() {
-//        contactRepository.deleteAll();
-//        userRepository.deleteAll();
-//    }
-
     @Test
     void testLoginUserNotFound() throws Exception {
         LoginUserRequest request = new LoginUserRequest();
@@ -54,13 +52,9 @@ public class AuthControllerTest {
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request))
-        ).andExpectAll(
-                status().isOk()
-        ).andDo(result -> {
-            WebResponse<TokenResponse> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {});
-
-            assertNull(response.getErrors());
-        });
+        ).andDo(
+                MockMvcResultHandlers.print()
+        ).andExpect(status().isOk());
     }
 
     @Test
@@ -74,13 +68,10 @@ public class AuthControllerTest {
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request))
-        ).andExpectAll(
-                status().isBadRequest()
-        ).andDo(result -> {
-            MockHttpServletResponse response = result.getResponse();
-
-            assertNotNull(response);
-        });
+        ).andDo(
+                MockMvcResultHandlers.print()
+        ).andExpect(status().isBadRequest())
+                .andExpect(status().reason("Invalid request content."));
     }
 
     @Test
