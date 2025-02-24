@@ -48,9 +48,6 @@ public class AuthorServiceImpl implements AuthorService {
     @Override
     public AuthorResponse setAuthorBook(Integer id, Integer bookId) {
 
-        log.info(id.toString());
-        log.info(bookId.toString());
-
         if (id.describeConstable().isEmpty() || bookId.describeConstable().isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "invalid required request");
         }

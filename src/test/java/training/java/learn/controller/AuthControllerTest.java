@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
 import training.java.learn.Security.BCrypt;
 import training.java.learn.dto.LoginUserRequest;
@@ -63,13 +64,27 @@ public class AuthControllerTest {
     }
 
     @Test
-    void testLoginFailWrongPass() throws Exception {
+    void testLoginFailUsernameOrPasswordNull() throws Exception {
+        LoginUserRequest request = new LoginUserRequest();
+        request.setUsername(null);
+        request.setPassword(null);
 
-        User user = new User();
-        user.setName("Aril");
-        user.setUsername("test");
-        user.setPassword(BCrypt.hashpw("rahasia", BCrypt.gensalt()));
-        userRepository.save(user);
+        mockMvc.perform(
+                post("/auth/login")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request))
+        ).andExpectAll(
+                status().isBadRequest()
+        ).andDo(result -> {
+            MockHttpServletResponse response = result.getResponse();
+
+            assertNotNull(response);
+        });
+    }
+
+    @Test
+    void testLoginFailWrongPass() throws Exception {
 
         LoginUserRequest request = new LoginUserRequest();
         request.setUsername("test");

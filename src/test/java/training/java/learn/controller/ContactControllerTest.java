@@ -114,13 +114,8 @@ class ContactControllerTest {
 
     @Test
     void getContactSuccess() throws Exception {
-        User user = new User();
-        user.setName("Putri");
-        user.setUsername("putri");
-        user.setPassword(BCrypt.hashpw("rahasia", BCrypt.gensalt()));
-        user.setToken("tokens");
-        user.setTokenExpiredAt(System.currentTimeMillis() + 1000000L);
-        userRepository.save(user);
+
+        User user = userRepository.findFirstByUsername("putri");
 
         CreateContactRequest request = new CreateContactRequest();
         request.setFirstName("Aril");
@@ -132,7 +127,7 @@ class ContactControllerTest {
                 post("/api/create/contact")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("X-API-TOKEN", "tokens")
+                        .header("X-API-TOKEN", user.getToken())
                         .content(objectMapper.writeValueAsString(request))
         ).andExpectAll(
                 status().isOk()
@@ -144,7 +139,7 @@ class ContactControllerTest {
                     get("/api/contact/" + response.getData().getId())
                             .accept(MediaType.APPLICATION_JSON)
                             .contentType(MediaType.APPLICATION_JSON)
-                            .header("X-API-TOKEN", "tokens")
+                            .header("X-API-TOKEN", user.getToken())
             ).andExpectAll(
                 status().isOk()
             ).andDo(res -> {

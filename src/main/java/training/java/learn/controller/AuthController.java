@@ -1,5 +1,6 @@
 package training.java.learn.controller;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,7 +24,7 @@ public class AuthController {
             produces = MediaType.APPLICATION_JSON_VALUE,
             consumes = MediaType.APPLICATION_JSON_VALUE
     )
-    public WebResponse<TokenResponse> login(@RequestBody LoginUserRequest request) {
+    public WebResponse<TokenResponse> login(@Valid @RequestBody LoginUserRequest request) {
         TokenResponse login = authService.login(request);
         return WebResponse.<TokenResponse>builder().data(login).build();
     }

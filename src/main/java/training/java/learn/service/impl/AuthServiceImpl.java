@@ -37,7 +37,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public TokenResponse login(LoginUserRequest request) {
-        validationService.validation(request);
+//        validationService.validation(request);
 
         User user = userRepository.findById(request.getUsername())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "username or password is wrong"));
