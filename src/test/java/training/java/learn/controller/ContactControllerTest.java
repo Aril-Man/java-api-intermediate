@@ -74,7 +74,7 @@ class ContactControllerTest {
             WebResponse<ContactResponse> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
             });
 
-            assertNull(response.getErrors());
+            assertNull(response.getMessage());
             assertNotNull(response.getData());
 
             assertEquals("Aril", response.getData().getFirstName());
@@ -108,7 +108,7 @@ class ContactControllerTest {
             WebResponse<String> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
             });
 
-            assertNotNull(response.getErrors());
+            assertNotNull(response.getMessage());
         });
     }
 
@@ -146,7 +146,7 @@ class ContactControllerTest {
                 WebResponse<ContactResponse> resGetContact = objectMapper.readValue(res.getResponse().getContentAsString(), new TypeReference<>() {});
 
                 assertNotNull(resGetContact.getData());
-                assertNull(resGetContact.getErrors());
+                assertNull(resGetContact.getMessage());
             });
         });
     }
@@ -188,7 +188,7 @@ class ContactControllerTest {
             ).andDo(res -> {
                 WebResponse<ContactResponse> resGetContact = objectMapper.readValue(res.getResponse().getContentAsString(), new TypeReference<>() {});
 
-                assertNotNull(resGetContact.getErrors());
+                assertNotNull(resGetContact.getMessage());
             });
         });
     }
@@ -241,7 +241,7 @@ class ContactControllerTest {
                 WebResponse<ContactResponse> res = objectMapper.readValue(result1.getResponse().getContentAsString(), new TypeReference<>() {
                 });
 
-                assertNull(res.getErrors());
+                assertNull(res.getMessage());
                 assertNotNull(res.getData());
             });
 
@@ -261,7 +261,7 @@ class ContactControllerTest {
             WebResponse<List<ContactResponse>> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
             });
 
-            assertNull(response.getErrors());
+            assertNull(response.getMessage());
         });
     }
 
@@ -279,7 +279,7 @@ class ContactControllerTest {
             WebResponse<List<ContactResponse>> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
             });
 
-            assertNull(response.getErrors());
+            assertNull(response.getMessage());
         });
     }
 
@@ -321,7 +321,7 @@ class ContactControllerTest {
             WebResponse<List<ContactResponse>> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
             });
 
-            assertNull(response.getErrors());
+            assertNull(response.getMessage());
         });
     }
 }

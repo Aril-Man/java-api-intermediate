@@ -78,7 +78,7 @@ public class AddressControllerTest {
             WebResponse<AddressResponse> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
             });
 
-            assertNull(response.getErrors());
+            assertNull(response.getMessage());
             assertEquals("jakarta", response.getData().getCity());
         });
     }
@@ -110,7 +110,7 @@ public class AddressControllerTest {
             WebResponse<AddressResponse> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
             });
 
-            assertNotNull(response.getErrors());
+            assertNotNull(response.getMessage());
         });
     }
 
@@ -141,7 +141,7 @@ public class AddressControllerTest {
             WebResponse<AddressResponse> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
             });
 
-            assertNotNull(response.getErrors());
+            assertNotNull(response.getMessage());
         });
     }
 
@@ -170,7 +170,7 @@ public class AddressControllerTest {
             WebResponse<AddressResponse> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
             });
 
-            assertNotNull(response.getErrors());
+            assertNotNull(response.getMessage());
         });
     }
 }

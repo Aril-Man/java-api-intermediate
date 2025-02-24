@@ -62,7 +62,7 @@ class BookControllerTest {
         ).andDo(result -> {
             WebResponse<String> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<WebResponse<String>>() {});
 
-            assertNull(response.getErrors());
+            assertNull(response.getMessage());
         });
     }
 
@@ -90,7 +90,7 @@ class BookControllerTest {
         ).andDo(result -> {
             WebResponse<String> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<WebResponse<String>>() {});
 
-            assertNotNull(response.getErrors());
+            assertNotNull(response.getMessage());
         });
     }
 
@@ -105,7 +105,7 @@ class BookControllerTest {
         ).andDo(result -> {
             WebResponse<List<BooksResponse>> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<WebResponse<List<BooksResponse>>>() {});
 
-            assertNull(response.getErrors());
+            assertNull(response.getMessage());
         });
     }
 }
