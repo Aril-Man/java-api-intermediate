@@ -96,7 +96,7 @@ class UserControllerTest {
             WebResponse<String> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
             });
 
-            assertNotNull(response.getErrors());
+            assertNotNull(response.getMessage());
         });
 
     }
@@ -126,7 +126,7 @@ class UserControllerTest {
             WebResponse<String> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
             });
 
-            assertNotNull(response.getErrors());
+            assertNotNull(response.getMessage());
         });
 
     }
@@ -143,7 +143,7 @@ class UserControllerTest {
             WebResponse<String> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
             });
 
-            assertNotNull(response.getErrors());
+            assertNotNull(response.getMessage());
         });
     }
 
@@ -158,7 +158,7 @@ class UserControllerTest {
             WebResponse<String> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
             });
 
-            assertNotNull(response.getErrors());
+            assertNotNull(response.getMessage());
         });
     }
 
@@ -177,7 +177,7 @@ class UserControllerTest {
             WebResponse<UserResponse> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
             });
 
-            assertNull(response.getErrors());
+            assertNull(response.getMessage());
             assertNotNull(response.getData());
         });
     }
@@ -209,7 +209,7 @@ class UserControllerTest {
         ).andDo(result -> {
             WebResponse<UserResponse> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {});
 
-            assertNull(response.getErrors());
+            assertNull(response.getMessage());
             assertNotNull(response.getData());
         });
     }
@@ -241,7 +241,7 @@ class UserControllerTest {
         ).andDo(result -> {
             WebResponse<UserResponse> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {});
 
-            assertNotNull(response.getErrors());
+            assertNotNull(response.getMessage());
         });
     }
 
@@ -268,7 +268,7 @@ class UserControllerTest {
             });
 
             assertNotNull(response.getData());
-            assertNull(response.getErrors());
+            assertNull(response.getMessage());
         });
     }
 }

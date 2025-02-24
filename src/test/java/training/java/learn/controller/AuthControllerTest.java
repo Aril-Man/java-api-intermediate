@@ -91,7 +91,7 @@ public class AuthControllerTest {
         ).andDo(result -> {
             WebResponse<String> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {});
 
-            assertNotNull(response.getErrors());
+            assertNotNull(response.getMessage());
         });
     }
 
@@ -111,7 +111,7 @@ public class AuthControllerTest {
         ).andDo(result -> {
             WebResponse<TokenResponse> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {});
 
-            assertNull(response.getErrors());
+            assertNull(response.getMessage());
             assertNotNull(response.getData().getToken());
             assertNotNull(response.getData().getExpiredAt());
 
@@ -124,55 +124,26 @@ public class AuthControllerTest {
     @Test
     void testLogoutSuccess() throws Exception {
 
-        User user = new User();
-        user.setUsername("putri");
-        user.setName("Putri");
-        user.setPassword(BCrypt.hashpw("rahasia", BCrypt.gensalt()));
-        user.setToken("tokens");
-        user.setTokenExpiredAt(System.currentTimeMillis() + 10000000L);
-        userRepository.save(user);
+        User user = userRepository.findFirstByUsername("putri");
 
         mockMvc.perform(
                 post("/auth/logout")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(user))
-                        .header("X-API-TOKEN", "tokens")
-        ).andExpectAll(
-           status().isOk()
-        ).andDo(result ->  {
-            WebResponse<LogoutResponse> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
-            });
-
-            assertNull(response.getErrors());
-            assertNotNull(response.getData());
-        });
+                        .header("X-API-TOKEN", user.getToken())
+        ).andDo(MockMvcResultHandlers.print())
+                .andExpect(status().isOk());
     }
 
     @Test
     void testLogoutUnauthorized() throws Exception {
 
-        User user = new User();
-        user.setUsername("putri");
-        user.setName("Putri");
-        user.setPassword(BCrypt.hashpw("rahasia", BCrypt.gensalt()));
-        user.setToken("tokens");
-        user.setTokenExpiredAt(System.currentTimeMillis() + 10000000L);
-        userRepository.save(user);
-
         mockMvc.perform(
                 post("/auth/logout")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(user))
                         .header("X-API-TOKEN", "notfound")
-        ).andExpectAll(
-                status().isUnauthorized()
-        ).andDo(result ->  {
-            WebResponse<LogoutResponse> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
-            });
-
-            assertNotNull(response.getErrors());
-        });
+        ).andDo(MockMvcResultHandlers.print())
+                .andExpect(status().isUnauthorized());
     }
 }

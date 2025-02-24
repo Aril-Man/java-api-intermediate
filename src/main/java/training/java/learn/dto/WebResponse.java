@@ -12,6 +12,6 @@ import lombok.NoArgsConstructor;
 public class WebResponse<T> {
 
     private T data;
-    private String errors;
+    private String message;
     private PaginationResponse paging;
 }
